@@ -97,6 +97,8 @@ def get_camera():
     cam.contrast = 0
     cam.brightness = 50
     cam.saturation = 0
+    if (get_hostname() == "opencv1"):
+	    cam.rotation = 270
     cam.ISO = 0
     cam.video_stabilization = False
     cam.exposure_compensation = 0
@@ -105,7 +107,6 @@ def get_camera():
     cam.awb_mode = 'auto'
     cam.image_effect = 'none'
     cam.color_effects = None
-    cam.rotation = 0
     cam.resolution = (640, 480)
 #    cam.resolution = (320, 240)
     cam.framerate = 24
@@ -153,25 +154,6 @@ def init():
         GPIO.setup(run_pin, GPIO.OUT)
     GPIO.setup(motion1_pin, GPIO.IN)
 
-#    cam.hflip = True
-#    cam.vflip = True
-#    cam.sharpness = 0
-#    cam.contrast = 0
-#    cam.brightness = 50
-#    cam.saturation = 0
-#    cam.ISO = 0
-#    cam.video_stabilization = False
-#    cam.exposure_compensation = 0
-#    cam.exposure_mode = 'auto'
-#    cam.meter_mode = 'average'
-#    cam.awb_mode = 'auto'
-#    cam.image_effect = 'none'
-#    cam.color_effects = None
-#    cam.rotation = 0
-#    cam.resolution = (640, 480)
-#    cam.resolution = (320, 240)
-#    cam.framerate = 24
-#    cam.led = False
     cam = get_camera()
     cam.close()
     return initStatus()
