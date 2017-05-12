@@ -15,7 +15,11 @@ import datetime
 import os
 import threading
 import sys
-sys.path.append('../pyconfig')
+SITE_ROOT=os.path.dirname(os.path.realpath(__file__))
+PARENT_ROOT=os.path.abspath(os.path.join(SITE_ROOT, os.pardir))
+configpath=PARENT_ROOT + "/pyconfig"
+print("configpath: " + configpath)
+sys.path.append(configpath)
 from pimcconfig import *
 #from ISStreamer.Streamer import Streamer
 
@@ -70,7 +74,8 @@ def get_datetime():
     return datetime.datetime.now().strftime("%Y-%m-%d__%H.%M.%S")
 
 def getvideopath():
-    return os.getcwd() + "/Videos/"
+    global SITE_ROOT
+    return SITE_ROOT + "/Videos/"
 
 def get_file_name():
     global vdatetime
@@ -78,9 +83,11 @@ def get_file_name():
     return getvideopath() + vdatetime + "." + get_hostname() + "."
 
 def getmotionshutdown():
-    return os.getcwd() + "/MOTIONSHUTDOWN"
+    global SITE_ROOT
+    return SITE_ROOT + "/MOTIONSHUTDOWN"
 def getmotionpushnotice():
-    return os.getcwd() + "/MOTIONPUSHNOTICE"
+    global SITE_ROOT
+    return SITE_ROOT + "/MOTIONPUSHNOTICE"
 
 def get_camera():
     cam = picamera.PiCamera()
@@ -111,6 +118,7 @@ def transferFile(f, fname):
     cmd_ready = scp_cmd + f + "ready" + scp_name
     cmd1 = "touch " + f + "ready"
     cmd2 = "rm -f " + f + "ready"
+    cmd3 = "rm -f " + fname
     print("%s" % (cmd1))
     os.system(cmd1)
     print("%s" % (cmd));
@@ -118,6 +126,7 @@ def transferFile(f, fname):
     print("%s" % (cmd_ready));
     os.system(cmd_ready)
     os.system(cmd2)
+    os.system(cmd3)
 
 def SendNotice(id, action, ft):
         t2 = threading.Thread(target=pushNotice, args=(id, action, ft))
