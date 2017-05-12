@@ -16,7 +16,7 @@ import os
 import threading
 import sys
 sys.path.append('../pyconfig')
-import pimcconfig
+from pimcconfig import *
 #from ISStreamer.Streamer import Streamer
 
 GPIO.setmode(GPIO.BCM)
@@ -55,7 +55,7 @@ light_status = [ light_status_off, light_status_off ]
 light_for_door = 0
 light_for_motion = 1
 
-cam = picamera.PiCamera()
+#cam = picamera.PiCamera()
 #logger=Streamer(bucket_name=bucket_name_value, bucket_key=bucket_key_value, access_key=access_key_value
 
 delay = 0
@@ -70,7 +70,7 @@ def get_datetime():
     return datetime.datetime.now().strftime("%Y-%m-%d__%H.%M.%S")
 
 def getvideopath():
-    return os.getcwd() + "Videos"
+    return os.getcwd() + "/Videos/"
 
 def get_file_name():
     global vdatetime
@@ -82,7 +82,31 @@ def getmotionshutdown():
 def getmotionpushnotice():
     return os.getcwd() + "/MOTIONPUSHNOTICE"
 
+def get_camera():
+    cam = picamera.PiCamera()
+#    cam.hflip = True
+#    cam.vflip = True
+    cam.sharpness = 0
+    cam.contrast = 0
+    cam.brightness = 50
+    cam.saturation = 0
+    cam.ISO = 0
+    cam.video_stabilization = False
+    cam.exposure_compensation = 0
+    cam.exposure_mode = 'auto'
+    cam.meter_mode = 'average'
+    cam.awb_mode = 'auto'
+    cam.image_effect = 'none'
+    cam.color_effects = None
+    cam.rotation = 0
+    cam.resolution = (640, 480)
+#    cam.resolution = (320, 240)
+    cam.framerate = 24
+    cam.led = False
+    return cam
+
 def transferFile(f, fname):
+    global scp_name
     cmd = scp_cmd + fname + scp_name
     cmd_ready = scp_cmd + f + "ready" + scp_name
     cmd1 = "touch " + f + "ready"
@@ -122,22 +146,24 @@ def init():
 
 #    cam.hflip = True
 #    cam.vflip = True
-    cam.sharpness = 0
-    cam.contrast = 0
-    cam.brightness = 50
-    cam.saturation = 0
-    cam.ISO = 0
-    cam.video_stabilization = False
-    cam.exposure_compensation = 0
-    cam.exposure_mode = 'auto'
-    cam.meter_mode = 'average'
-    cam.awb_mode = 'auto'
-    cam.image_effect = 'none'
-    cam.color_effects = None
-    cam.rotation = 0
-    cam.resolution = (640, 480)
-    cam.framerate = 24
-    cam.led = False
+#    cam.sharpness = 0
+#    cam.contrast = 0
+#    cam.brightness = 50
+#    cam.saturation = 0
+#    cam.ISO = 0
+#    cam.video_stabilization = False
+#    cam.exposure_compensation = 0
+#    cam.exposure_mode = 'auto'
+#    cam.meter_mode = 'average'
+#    cam.awb_mode = 'auto'
+#    cam.image_effect = 'none'
+#    cam.color_effects = None
+#    cam.rotation = 0
+#    cam.resolution = (640, 480)
+#    cam.resolution = (320, 240)
+#    cam.framerate = 24
+#    cam.led = False
+    cam = get_camera()
     cam.close()
     return initStatus()
 
@@ -153,7 +179,7 @@ def initStatus():
         light_off(light_pins[index], " ")
     if (run_pin != 0):
         light_on(run_pin, " ")
-    camera_off(cam)
+#    camera_off(cam)
     if (os.path.isfile(getmotionshutdown()) == True):
         print("Motion Shutdown file exists, please delete it before starting")
         return False
@@ -194,7 +220,8 @@ def camera_on():
     vfilename = vfile + "h264"
     pushNotice("video", "recording", vdatetime)
     print ("before opening camera ... for file " + vfilename)
-    cam = picamera.PiCamera()
+#    cam = picamera.PiCamera()
+    cam = get_camera()
     print ("... after opening camera")
     cam.start_recording(vfilename)
     print ("camera on, file name: " + vfilename)
@@ -277,5 +304,5 @@ if __name__ == '__main__':
         if (run_pin != 0):
             light_off(run_pin, " ")
         GPIO.cleanup()
-	cam.close()
+#	cam.close()
 
